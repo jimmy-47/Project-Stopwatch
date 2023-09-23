@@ -1,49 +1,58 @@
-var seconds = 00;
-var tens = 00;
-var appendTens = document.getElementById("tens");
-var appendSeconds = document.getElementById("seconds");
-var buttonStart = document.getElementById("button-start");
-var buttonStop = document.getElementById("button-stop");
-var buttonReset = document.getElementById("button-reset");
-var interval; // to store timer values
+// Assigning the initial values of milliseconds, seconds, minutes and hour as 0, 0, 0, 0 using an array
+let [milliseconds, seconds, minutes, hours] = [0, 0, 0, 0];
+// select the displayTime and store it in a local variable
+let displayTime = document.getElementById("displayTime");
+// it shows that no interval is present or started
+let timer = null;
 
-// this function will run when click on start
+// create a function for the StopWatch
+function stopWatch(){
+    milliseconds += 10; // increase milliseconds by 10 after each encounter
+    if(milliseconds == 1000){ //when milliseconds reaches to 1000 change it to 00 and increase the secondsby 1
+        milliseconds = 00;
+        seconds++;
+        if(seconds == 60){ //when seconds reaches to 60, change it to 0 and increase minutes by 1
+            seconds = 0;
+            minutes++;
+            if(minutes == 60){ //when minutes reaches to 60, change it to 0 and increase hours by 1
+                minutes = 0;
+                hours++;
+            }
+        }
+    }
 
-function startTimer() {
-  tens++;
+    // if hour is less than 10 add a 0 prior to hours and store it in a local variable for furture use
+    let h = hours < 10 ? "0" + hours : hours;
+    // if minutes is less than 10 add a 0 prior to minutes and store it in a local variable for furture use
+    let m = minutes < 10 ? "0" + minutes : minutes;
+    // if seconds is less than 10 add a 0 prior to seconds and store it in a local variable for furture use
+    let s = seconds < 10 ? "0" + seconds : seconds;
+    // if milliseconds is less than 10 add a 0 prior to milliseconds and store it in a local variable for furture use
+    let ms = milliseconds < 10 ? "00" + milliseconds : milliseconds < 100 ? "0" + milliseconds : milliseconds;
 
-  if (tens < 9) {
-    appendTens.innerHTML = "0" + tens;
-  }
-  if (tens > 9) {
-    appendTens.innerHTML = tens;
-  }
-  if (tens > 99) {
-    seconds++;
-    appendSeconds.innerHTML = "0" + seconds;
-    tens = 0;
-    appendTens.innerHTML = "0" + 0;
-  }
-  if (seconds > 9) {
-    appendSeconds.innerHTML = seconds;
-  }
+    // display the latest time
+    displayTime.innerHTML = h + ":" + m + ":" + s + "." + ms;
 }
 
-buttonStart.onclick = function () {
-  if (interval) {
-    clearInterval(interval);
-  }
-  interval = setInterval(startTimer);
-};
+// create a function to start the StopWatch
+function watchStart(){
+    // if any ongoing interval is present (or running) stop it and then restart it 
+    if(timer !== null){
+        clearInterval(timer);
+    }
+    timer = setInterval(stopWatch, 10);
+}
 
-buttonStop.onclick = function () {
-  clearInterval(interval);
-};
+// create a function to stop the StopWatch
+function watchStop(){
+    // clear the previous interval
+    clearInterval(timer);
+}
 
-buttonReset.onclick = function () {
-  clearInterval(interval);
-  tens = "00";
-  seconds = "00";
-  appendSeconds.innerHTML = seconds;
-  appendTens.innerHTML = tens;
-};
+// create a function to reset the StopWatch
+function watchReset(){
+    clearInterval(timer);
+    // clear the previous interval and assign the default values to the timer 
+    [milliseconds, seconds, minutes, hours] = [0, 0, 0, 0];
+    displayTime.innerHTML = "00:00:00.000"
+}
